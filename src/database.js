@@ -4,12 +4,23 @@ import { config } from 'dotenv';
 config();
 const { Pool } = pg;
 
-const connection = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.PORT
-});
+const { DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
+
+const connection = new Pool(
+  process.env?.NODE_ENV === "development"
+    ? {
+        user: DB_USERNAME,
+        host: DB_HOST,
+        port: DB_PORT,
+        database: DB_DATABASE,
+        password: DB_PASSWORD,
+      }
+    : {
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+);
 
 export default connection;
