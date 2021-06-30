@@ -1,4 +1,4 @@
-import { userSchema } from '../../utils/schemas.js';
+import { userSchema } from '../../schemas/userSchema.js';
 import bcrypt from 'bcrypt';
 
 const signup = (app, connection) => {
@@ -13,7 +13,7 @@ const signup = (app, connection) => {
 		if ('error' in userSchema.validate(req.body)) {
 			return res.sendStatus(400);
 		}
-        
+
         const hash = bcrypt.hashSync(password, 10);
 
 		try {
