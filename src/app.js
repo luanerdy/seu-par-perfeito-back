@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import bcrypt from 'bcrypt';
 import connection from './database.js';
+import { routes } from './routes/routes.js';
 import productSchema from './schemas/productSchema.js';
 
 const app = express();
@@ -36,5 +36,7 @@ app.get("/products", async (req, res) => {
         res.sendStatus(500);
     }
 });
+
+routes(app);
 
 export default app;
