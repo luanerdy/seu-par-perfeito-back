@@ -20,7 +20,7 @@ describe('POST /auth/signup', () => {
 		expect(status).toEqual(400);
 	});
 
-	it('return 400 for invalid params', async () => {
+	it('returns 400 for invalid params', async () => {
 		const user = {
 			name: 'Luan',
 			email: 'luanv',
