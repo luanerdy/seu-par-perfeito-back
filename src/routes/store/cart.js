@@ -43,18 +43,25 @@ const cart = (app, connection) => {
         };
     });
     
-    app.get("/cart", async (req, res) => {
+    app.get("/cart/:userId", async (req, res) => {
         try {
-            //check all product_cart for that user
-            //const authorization = req.header('Authorization');
-            //const token = authorization?.replace('Bearer ', '');
-            //if(!token) return res.sendStatus(401);
-            const { userId } = req.body;
+            const authorization = req.header('Authorization');
+            const token = authorization?.replace('Bearer ', '');
+            if(!token) return res.sendStatus(400);
+
+            const userId = req.params.userId;
+            const tokenValidation = await connection.query(`
+                SELECT * FROM sessions
+                WHERE "userId" = $1 AND token = $2
+            `, [userId, token]);
+            if (tokenValidation.rows.length === 0) return res.sendStatus(401);
+
             const products = await connection.query(`
-                SELECT * FROM product_cart
-                WHERE 
-            `);
-            //return list of products on that cart
+                SELECT products.*, cart.quantity FROM product_cart AS cart
+                JOIN products ON cart."productId" = products.id
+                WHERE "userId" = $1
+            `, [userId]);
+            res.send(products.rows);
         } catch(err) {
             console.log(err);
             res.sendStatus(500);
