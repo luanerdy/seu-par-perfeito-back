@@ -24,7 +24,7 @@ describe("POST /products", () => {
         image: 'https://http.cat/204' 
     };
 
-    it("returns status 400 for missing parameters", async () => {
+    it("returns status 400 for missing/wrong parameters", async () => {
         const wrongBody = { ...body, value: '' };
         const result = await supertest(app).post("/products").send(wrongBody);
         expect(result.status).toEqual(400);
