@@ -35,7 +35,6 @@ describe("POST /products", () => {
         expect(post.status).toEqual(201);
         const result = await connection.query('SELECT * FROM products');
         const products = result.rows;
-        console.log(products);
         expect(products.length).toEqual(1);
     });
 });
