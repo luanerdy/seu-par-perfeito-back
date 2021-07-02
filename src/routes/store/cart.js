@@ -119,7 +119,7 @@ const cart = (app, connection) => {
         }
     });
 
-    app.delete("/cart", async (req, res) => {
+    app.post("/cart", async (req, res) => {
         try {
             const authorization = req.header("Authorization");
             const token = authorization?.replace('Bearer ', '');
