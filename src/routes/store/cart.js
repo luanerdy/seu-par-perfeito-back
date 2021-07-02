@@ -95,18 +95,48 @@ const cart = (app, connection) => {
         }
     });
 
-    app.delete("/cart/product", async (req, res) => {
+    app.post("/cart/product", async (req, res) => {
         try {
+            const authorization = req.header("Authorization");
+            const token = authorization?.replace('Bearer ', '');
+            const { userId, productId } = req.body;
+            if(!token) return res.sendStatus(400);
 
+            const tokenValidation = await connection.query(`
+                SELECT * FROM sessions
+                WHERE "userId" = $1 AND token = $2
+            `, [userId, token]);
+            if (tokenValidation.rows.length === 0) return res.sendStatus(401);
+
+            await connection.query(`
+                DELETE FROM product_cart
+                WHERE "userId" = $1 AND "productId" = $2 
+            `, [userId, productId]);
+            res.sendStatus(200);
         } catch(err) {
             console.log(err);
             res.sendStatus(500);
         }
     });
 
-    app.delete("/cart", async (req, res) => {
+    app.post("/cart/all", async (req, res) => {
         try {
+            const authorization = req.header("Authorization");
+            const token = authorization?.replace('Bearer ', '');
+            const { userId } = req.body;
+            if(!token) return res.sendStatus(400);
 
+            const tokenValidation = await connection.query(`
+                SELECT * FROM sessions
+                WHERE "userId" = $1 AND token = $2
+            `, [userId, token]);
+            if (tokenValidation.rows.length === 0) return res.sendStatus(401);
+
+            await connection.query(`
+                DELETE FROM product_cart
+                WHERE "userId" = $1
+            `, [userId]);
+            res.sendStatus(200);
         } catch(err) {
             console.log(err);
             res.sendStatus(500);
