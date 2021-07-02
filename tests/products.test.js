@@ -40,11 +40,6 @@ describe("POST /products", () => {
 });
 
 describe("GET /products", () => {
-    it("returns 404 if the array is empty", async () => {
-        const result = await supertest(app).get("/products");
-        expect(result.status).toEqual(404);
-    });
-    
     it("returns an array of products", async () => {
         await connection.query(`
                 INSERT INTO products (name, value, description, image) VALUES

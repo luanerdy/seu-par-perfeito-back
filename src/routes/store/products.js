@@ -22,7 +22,6 @@ const products = (app, connection) => {
         try {
             const request = await connection.query('SELECT * FROM products');
             const products = request.rows;
-            if (request.rows.length === 0) return res.sendStatus(404);
             res.send(products);
         } catch(err) {
             console.log(err);
