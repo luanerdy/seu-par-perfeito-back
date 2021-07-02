@@ -33,6 +33,7 @@ const login = (app, connection) => {
 			await connection.query(sql, [id, token]);
 			res.send({
 				name,
+				email,
 				userId: id,
                 token
 			});
