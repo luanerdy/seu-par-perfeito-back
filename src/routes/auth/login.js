@@ -27,7 +27,7 @@ const login = (app, connection) => {
 				return res.sendStatus(400);
 			}
 
-			const { id, name, email } = existsUser.rows[0];
+			const { id, name } = existsUser.rows[0];
             const token = jwt.sign({ name }, process.env.JWT_SECRET);
 
 			await connection.query(sql, [id, token]);
