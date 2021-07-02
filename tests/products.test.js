@@ -35,17 +35,11 @@ describe("POST /products", () => {
         expect(post.status).toEqual(201);
         const result = await connection.query('SELECT * FROM products');
         const products = result.rows;
-        console.log(products);
         expect(products.length).toEqual(1);
     });
 });
 
 describe("GET /products", () => {
-    it("returns 404 if the array is empty", async () => {
-        const result = await supertest(app).get("/products");
-        expect(result.status).toEqual(404);
-    });
-    
     it("returns an array of products", async () => {
         await connection.query(`
                 INSERT INTO products (name, value, description, image) VALUES
