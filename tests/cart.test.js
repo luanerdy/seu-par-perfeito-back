@@ -7,6 +7,9 @@ const fakeToken = "123456";
 let productId = 0;
 
 beforeAll(async () => {
+    await connection.query('DELETE FROM product_cart');
+    await connection.query('DELETE FROM sessions');
+    await connection.query('DELETE FROM products');
     await connection.query('INSERT INTO sessions ("userId", token) values ($1,$2)'
     , [fakeUserId, fakeToken]);
     const products = await connection.query(`
@@ -100,5 +103,27 @@ describe("GET /cart/:userId", () => {
         `, [fakeUserId, productId, 1]);
         const result = await supertest(app).get(`/cart/${fakeUserId}`).set('Authorization', 'Bearer 123456');
         expect(result.body.length).toEqual(1);
+    });
+});
+
+describe("PUT /cart", () => {
+    const body = { userId: fakeUserId, productId, quantity: 1 };
+    
+    it("returns status 406 for invalid body", async () => {
+        const wrongBody = { ...body, quantity: 0 };
+        const result = await supertest(app).put('/cart').send(wrongBody).set('Authorization', 'Bearer 123456');
+        expect(result.status).toEqual(406);
+    });
+    it("return status 400 for missing token", async () => {
+        const result = await supertest(app).put('/cart').send(body);
+        expect(result.status).toEqual(400);
+    });
+    it("returns status 401 for invalid token", async () => {
+        const result = await supertest(app).put('/cart').send(body).set('Authorization', 'Bearer 1234567890');
+        expect(result.status).toEqual(401);
+    });
+    it("returns status 200 for valid token", async () => {
+        const result = await supertest(app).put('/cart').send(body).set('Authorization', 'Bearer 123456');
+        expect(result.status).toEqual(200);
     });
 });
